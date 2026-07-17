@@ -1,0 +1,9 @@
+# 过滤掉 IDEA 配置文件
+.idea/
+*.iml
+*.iws
+
+# 如果你还有其他的垃圾文件（比如日志或缓存），也可以加在这里
+*.log
+dist/
+node_modules/

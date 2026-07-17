@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SUI-Ops (SuiOps) - 云原生网络资产分布式自治与自动化运维总控</title>
+
+    <meta name="description" content="SUI-Ops (SuiOps) 是下一代云原生网络资产分布式自动化总控系统。提供智能弹性扩缩容、级差分销裂变、节点自动迁移及账号级并发控制，助力全球网络资源运营商实现流量闭环与经营自动化。">
+    <meta name="keywords" content="SUI-Ops, SuiOps, 网络资产自动化, 分布式网关, 自动扩容, 级差分销, 动态节点调度, 运维管理总控, 流量经营">
+
+    <meta property="og:title" content="SUI-Ops (suiops) | 分布式网络资产自动化总控">
+    <meta property="og:description" content="让运维自动化，让盈利更简单。分布式节点调度与无限层级分销引擎，赋能全球网络资源运营。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mcqwyhud.github.io/sui-ops-docs/">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0B0F19;
+            --accent-green: #10B981;
+            --accent-blue: #3B82F6;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-effect {
+            background: rgba(11, 15, 25, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .border-gradient {
+            background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.5), transparent);
+            height: 1px;
+            width: 80%;
+            margin: 2rem auto;
+        }
+
+        .text-gradient {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .card-glow:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scroll-indicator::before {
+            content: "";
+            width: 6px;
+            height: 10px;
+            background: white;
+            border-radius: 3px;
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(15px);
+                opacity: 0;
+            }
+        }
+
+        .architecture-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .arch-node {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            z-index: 10;
+            position: relative;
+        }
+
+        .arch-arrow {
+            flex-grow: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+            position: relative;
+            margin: 0 1rem;
+        }
+
+        .arch-arrow::after {
+            content: "→";
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            color: var(--accent-green);
+            font-size: 1.5rem;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(17, 24, 39, 0.8));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .contact-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+<div id="app">
+    <!-- Header Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-gradient">SUI-Ops</div>
+            <nav>
+                <ul class="flex space-x-8">
+                    <li><a href="#pain-points" class="nav-link hover:text-green-400">核心难题</a></li>
+                    <li><a href="#pain-points-detail" class="nav-link hover:text-green-400">解决方案</a></li>
+                    <li><a href="#architecture" class="nav-link hover:text-green-400">技术架构</a></li>
+                    <li><a href="#features" class="nav-link hover:text-green-400">功能特性</a></li>
+                    <li><a href="#business" class="nav-link hover:text-green-400">版本定价</a></li>
+                    <li><a href="#contact" class="nav-link hover:text-green-400">商业合作</a></li>
+                    <li><a href="./docs/" class="nav-link text-green-400">快速开始</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center pt-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black opacity-30"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h1 class="text-5xl md:text-6xl font-bold mb-8 fade-in leading-relaxed">
+                <span class="block text-gradient mb-4">SUI-Ops (SuiOps)</span>
+<!--                <span class="block text-green-400 mb-4">让运维交给系统</span>-->
+<!--                <span class="block text-blue-400 mb-4">让质量交给 sing-box</span>-->
+<!--                <span class="block text-gradient">专注于营销</span>-->
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-4 max-w-3xl mx-auto fade-in" style="animation-delay: 0.2s">
+                基于分布式自治架构的网络资产总控。从自动扩容到收益裂变，将复杂的底层运维闭环，让您专注于营销获客，彻底摆脱技术债务的枷锁。
+            </p>
+            <p class="text-lg text-green-400 mb-8 fade-in" style="animation-delay: 0.3s">
+                🚀 动态资源利用率近乎 100%，同样服务器多卖一倍的量
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in" style="animation-delay: 0.4s">
+                <button onclick="openVideo()" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-full hover:shadow-lg transition duration-300 transform hover:-translate-y-0.5 flex items-center justify-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    预览视频
+                </button>
+                <a href="https://t.me/SuiOps_Admin" target="_blank" rel="noopener noreferrer" class="btn-primary bg-gray-800 hover:bg-gray-700">申请系统演示</a>
+            </div>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- Pain Points Section -->
+    <section id="pain-points" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">三大核心难题</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 收益增长中心 -->
+                <div class="feature-card card-glow fade-in">
+                    <div class="text-green-400 text-4xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gradient">收益增长中心</h3>
+                    <p class="text-gray-300 mb-4">
+                        打造你的"流量商业引擎"
+                    </p>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>分销矩阵的"裂变僵局"与手动对账难题</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>资源调度的"僵化"与集群冗余成本</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>财务结算与运营数据的"账单黑洞"</li>
+                    </ul>
+                </div>
+
+                <!-- 资产防御中心 -->
+                <div class="feature-card card-glow fade-in" style="animation-delay: 0.2s">
+                    <div class="text-blue-400 text-4xl mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gradient">资产防御中心</h3>
+                    <p class="text-gray-300 mb-4">
+                        构筑你的"业务防火墙"
+                    </p>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>客户端协议泄露与"一号多用"的流量滥用</li>
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>故障发生时的"群体性断连"与客服瘫痪</li>
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>低效的监控告警与"故障黑洞"</li>
+                        <li><i class="fas fa-check text-blue-400 mr-2"></i>大规模集群调度下的"API 封禁"与"惊群效应"</li>
+                    </ul>
+                </div>
+
+                <!-- 架构支撑中心 -->
+                <div class="feature-card card-glow fade-in" style="animation-delay: 0.4s">
+                    <div class="text-purple-400 text-4xl mb-4">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gradient">架构支撑中心</h3>
+                    <p class="text-gray-300 mb-4">
+                        夯实你的"商业化基石"
+                    </p>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>企业经营的"环境准入"与"技术启动"难题</li>
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>商业运营的"权限裸奔"与信任黑洞</li>
+                        <li><i class="fas fa-check text-purple-400 mr-2"></i>分布式运维的"配置孤岛"与节点漂移</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points Detail Section -->
+    <section id="pain-points-detail" class="py-20 bg-gray-900 bg-opacity-30">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">十大关键经营场景与应对方案</h2>
+
+            <!-- 收益增长中心解决方案 -->
+            <div class="mb-20">
+                <h3 class="text-2xl font-bold mb-8 text-green-400 flex items-center">
+                    <i class="fas fa-chart-line mr-3"></i> 收益增长中心解决方案
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="feature-card fade-in">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">分销矩阵的"裂变僵局"与手动对账</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：缺乏自动化的级差分成机制，导致分销代理商在运营时面临结算繁琐、分润不公等问题，极大阻碍了大规模分销矩阵的建立。
+                        </p>
+                        <div class="bg-green-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-green-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>基于 CDK 的自动级差提成结算引擎</strong>。内置递归式级差提成模型，支持无限层级嵌套。每一笔充值与 CDK 使用，系统自动按分销链路实时结算级差利润。完全去人工化，确保账目透明可追溯。这是吸引优质代理商、建立裂变分销矩阵的最强引擎。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.2s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">资源调度的"僵化"与集群冗余成本</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：传统面板在"固定节点"与"动态池"之间无法平衡，导致昂贵的资源冗余与糟糕的用户体验之间持续内耗，资源利用率低下，直接吞噬利润空间。
+                        </p>
+                        <div class="bg-green-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-green-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>固定节点保质 + 动态资源池保量</strong>的双轨调度架构。通过"固定节点"支撑核心业务，"动态资源池"捕捉流量波峰。分钟级自动扩缩容，彻底终结了"固定资源过剩"与"动态资源不稳"的陈旧运营模式，实现资源利用率与用户体验的极致平衡。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.4s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">财务结算与运营数据的"账单黑洞"</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：传统统计方案仅依赖瞬时计数且缺乏断点保护，网络抖动或总控宕机即意味着真实流量账单的永久丢失，导致财务交付存在巨大风险。
+                        </p>
+                        <div class="bg-green-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-green-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>最终一致性补偿结算体系</strong>。通过子逻辑服的本地流量缓冲与心跳上报协议，无论总控网络如何波动，每一 Byte 流量均在节点本地留痕，待总控恢复瞬间自动完成闭环补偿，确保每一笔财务账单 100% 精准交付。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 资产防御中心解决方案 -->
+            <div class="mb-20">
+                <h3 class="text-2xl font-bold mb-8 text-blue-400 flex items-center">
+                    <i class="fas fa-shield-alt mr-3"></i> 资产防御中心解决方案
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="feature-card fade-in">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">客户端协议泄露与"一号多用"的流量滥用</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：传统通用订阅链接（URL）极易被恶意爬取或分享，不仅面临带宽被薅羊毛，更无法控制"一号多用"引发的并发超卖风险。
+                        </p>
+                        <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-blue-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>私有协议网关与账号级并发会话控制</strong>。摒弃落盘订阅，自研客户端实现账号登录与内存态协议执行，极大降低节点信息泄露。同时，系统内置实时会话握手协议，实现账号级单点在线管控，彻底解决资产滥用危机。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.2s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">故障发生时的"群体性断连"与客服瘫痪</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：节点宕机引发海量客诉（工单雪崩）。传统人工手动切换，难以在黄金时段完成大规模迁移，导致营收严重受损。
+                        </p>
+                        <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-blue-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>业务热迁移与自动消息广播</strong>。当检测到单点故障时，瞬间触发节点流量平滑迁移，实现业务无感切换。支持针对性手术刀迁移，配合消息实时同步，彻底脱离投诉泥潭，大幅提升客户付费/续费率。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.4s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">低效的监控告警与"故障黑洞"</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：传统方案无监控或仅依赖单点 Ping，完全无法感知"软故障"（如丢包、协议抖动），运维人员往往在海量客诉中才后知后觉。
+                        </p>
+                        <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-blue-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>基于客户端真实感知的分布式自愈系统</strong>。客户端即探针，直接捕获真实链路质量；基于多维健康指标实现最快 2 分钟的异常自动熔断与流量迁移；可视化运维彻底将运维人员从底层告警中解放出来。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.6s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">大规模集群调度下的"API 封禁"与"惊群效应"</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：高频 API 调用易触碰云商风控；单一节点故障引发万级客户端并发重连，极易导致集群连锁崩溃。
+                        </p>
+                        <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-blue-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>全生命周期资产自治系统</strong>。内置云商 API 调用平抑算法，确保资产管理合规；配合分布式状态迁移机制，平滑消化重连压力，确保系统在极端故障下依然保持"零抖动"自治。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 架构支撑中心解决方案 -->
+            <div class="mb-20">
+                <h3 class="text-2xl font-bold mb-8 text-purple-400 flex items-center">
+                    <i class="fas fa-cogs mr-3"></i> 架构支撑中心解决方案
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="feature-card fade-in">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">企业经营的"环境准入"与"技术启动"难题</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：复杂的环境部署与调试是新手站长的起步障碍，导致业务上线延迟，且容易因基础不牢而频繁报错。
+                        </p>
+                        <div class="bg-purple-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-purple-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>专属技术启动与运营导航服务</strong>。专家级环境交付，协助完成底层架构搭建，让您免除繁琐的技术折腾。通过严格的服务边界界定，不仅让您快速从 0 到 1 启动，更实现系统的自主掌控。让您专注于营销，而不是运维。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.2s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">商业运营的"权限裸奔"与信任黑洞</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：传统面板缺乏租户隔离，分销代理商在运营时面临隐私泄露风险，限制了大代理矩阵的扩张。
+                        </p>
+                        <div class="bg-purple-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-purple-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>租户级物理权限沙箱</strong>。内置全链路租户隔离模型，通过行级安全（Row-level Security）确保每位管理员仅能管理资源域内的下级，实现商业资产与财务数据的物理切割。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card fade-in" style="animation-delay: 0.4s">
+                        <h4 class="text-xl font-bold mb-4 text-gradient">分布式运维的"配置孤岛"与节点漂移</h4>
+                        <p class="text-gray-300 mb-4">
+                            现状：依赖中心化数据库强行推送配置，极易出现节点配置与数据库不同步，导致频繁失配与节点离线。
+                        </p>
+                        <div class="bg-purple-900 bg-opacity-30 p-4 rounded-lg">
+                            <h5 class="font-bold mb-2 text-purple-400">解决方案：</h5>
+                            <p class="text-sm">
+                                <strong>数据源驱动的声明式架构</strong>。每一台 VPS 均作为规则执行的源头，通过[事件总线]实现配置变更的实时上报与总控拓扑自动重构。实现配置变更的原子化同步，彻底杜绝手动管理造成的配置断层。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="py-20 bg-gray-900 bg-opacity-30">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">分布式微内核架构 —— 核心技术壁垒</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="architecture-diagram fade-in">
+                    <div class="arch-node">
+                        <div class="text-lg font-bold">客户端</div>
+                    </div>
+                    <div class="arch-arrow"></div>
+                    <div class="arch-node">
+                        <div class="text-lg font-bold">对外服<br><span class="text-sm text-gray-400">分布式接入</span></div>
+                    </div>
+                    <div class="arch-arrow"></div>
+                    <div class="arch-node">
+                        <div class="text-lg font-bold">逻辑服网关<br><span class="text-sm text-gray-400">集群</span></div>
+                    </div>
+                    <div class="arch-arrow"></div>
+                    <div class="arch-node">
+                        <div class="text-lg font-bold">核心总控<br><span class="text-sm text-gray-400">数据/状态/调度</span></div>
+                    </div>
+                </div>
+                <div class="mt-12 text-center fade-in" style="animation-delay: 0.3s">
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                        控制面与数据面完全物理分离：总控大脑仅负责资产编排与账单结算，所有实时流量直接由客户端直连子节点。总控即便离线，已在线业务绝无断流风险。基于分布式最终一致性补偿协议，离线期间的所有流量数据在总控恢复瞬间自动完成闭环补偿，确保每一 Byte 账单精准无误。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid Section -->
+    <section id="features" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">八大特性 —— 纯技术肌肉药方</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="feature-card fade-in">
+                    <div class="text-green-400 text-3xl mb-3">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">智能弹性扩缩容</h3>
+                    <p class="text-gray-300 text-sm">
+                        单地区热点触发扩容，全局低负载自动缩容。"在路上"容量加权计算，智能平抑云商 API 请求速率，防止被机房限流。
+                        <br><span class="text-green-400">深夜自动关机，每小时替你省钱。只为真实在线买单，不为离线用户买单。</span>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.1s">
+                    <div class="text-blue-400 text-3xl mb-3">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">分布式动态节点池调度</h3>
+                    <p class="text-gray-300 text-sm">
+                        无状态零持久化设计。连接时才分配资源，断开即释放。
+                        <br><span class="text-blue-400">彻底消灭离线占坑，同样服务器容量多卖一倍用户。</span>
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.2s">
+                    <div class="text-purple-400 text-3xl mb-3">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">智能监控与全自动故障自愈</h3>
+                    <p class="text-gray-300 text-sm">
+                        内置全天候自愈引擎。独创【多地区故障率交叉分析】与【小样本保护机制】，精准剔除网络噪声，最快 2 分钟自动判定并切换故障，实现无人值守。
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.3s">
+                    <div class="text-yellow-400 text-3xl mb-3">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">工业级安全排水与热迁移</h3>
+                    <p class="text-gray-300 text-sm">
+                        首创【用户级 / 节点级 / VPS级】热迁移。实例排空期间，采用"新节点先加、旧节点后删"的一致性控制，提升用户体验。
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.4s">
+                    <div class="text-red-400 text-3xl mb-3">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">7阶实例状态机与超时兜底</h3>
+                    <p class="text-gray-300 text-sm">
+                        全生命周期管理（开机→启动→就绪→服役→排空→迁移→自动销毁）。30秒轮询+自动强制销毁机制，每一分每一毫的硬件费用都由系统严格审计并释放。
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.5s">
+                    <div class="text-indigo-400 text-3xl mb-3">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">JVM 专家级 APM 诊断与动态调优</h3>
+                    <p class="text-gray-300 text-sm">
+                        5秒高频扫描。支持平滑重启应用上下文及硬重启 Java 进程，支持动态下发 JVM 参数调优。严谨的"纯容量"内存展示设计，拒绝百分比误导。
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.6s">
+                    <div class="text-teal-400 text-3xl mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">总控健康度评分与智能告警</h3>
+                    <p class="text-gray-300 text-sm">
+                        基于内存/CPU/GC/磁盘/线程 5 维加权打分。针对死锁、过载、Full GC 提供严重告警、优化建议三级告警体系。
+                    </p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.7s">
+                    <div class="text-pink-400 text-3xl mb-3">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">双轨支付灾备与安全审计</h3>
+                    <p class="text-gray-300 text-sm">
+                        首创【同域API内嵌/异域灾备跳转】双轨制收单，免疫接口风控。配合 @OperationLog AOP 脱敏切面，敏感操作实时脱敏，日志分级物理销毁。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Models Section -->
+    <section id="business" class="py-20 bg-gray-900 bg-opacity-30">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">版本与定价</h2>
+            <p class="text-center text-gray-300 text-lg mb-8 fade-in">所有版本均内置无限级分销与自动级差提成，代理帮你赚钱，系统帮你算账。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- 初创版 -->
+                <div class="model-card fade-in">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">初创版</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>授权费: ¥999 (含首次部署服务)</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥99<span class="text-lg">/月</span></div>
+                        <div class="text-gray-400">季付（3个月起付）</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400 mb-4">
+                            <i class="fas fa-users text-xl mb-2"></i>
+                            <p>有效用户 ≤ 50人</p>
+                        </div>
+                        <div class="text-center text-green-400 text-sm">
+                            <p>¥497 / 首季 (包含：首期授权启动费 ¥200 + 3个月租金 ¥297)</p>
+                            <p>第4个月续费时：补齐授权余款 ¥799 + 后续季度租金</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+
+                <!-- 标准版 -->
+                <div class="model-card fade-in" style="animation-delay: 0.1s">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">标准版</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>授权费: ¥1999 (含首次部署服务)</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥399<span class="text-lg">/月</span></div>
+                        <div class="text-gray-400">季付/半年付/年付</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-users text-xl mb-2"></i>
+                            <p>有效用户 ≤ 300人</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+
+                <!-- 进阶版 -->
+                <div class="model-card fade-in" style="animation-delay: 0.2s">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">进阶版</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>授权费: ¥1999 (含首次部署服务)</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥599<span class="text-lg">/月</span></div>
+                        <div class="text-gray-400">季付/半年付/年付</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-users text-xl mb-2"></i>
+                            <p>有效用户 ≤ 800人</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+
+                <!-- 专业版 -->
+                <div class="model-card fade-in" style="animation-delay: 0.3s">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">专业版</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>授权费: ¥1999 (含首次部署服务)</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥899<span class="text-lg">/月</span></div>
+                        <div class="text-gray-400">季付/半年付/年付</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-users text-xl mb-2"></i>
+                            <p>有效用户 ≤ 2,000人</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+
+                <!-- 旗舰版 -->
+                <div class="model-card fade-in" style="animation-delay: 0.4s">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">旗舰版</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>授权费: ¥1999 (含首次部署服务)</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥1,599<span class="text-lg">/月</span></div>
+                        <div class="text-gray-400">季付/半年付/年付</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-users text-xl mb-2"></i>
+                            <p>不限制有效用户数</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+
+                <!-- 品牌定制服务 -->
+                <div class="model-card fade-in" style="animation-delay: 0.5s">
+                    <div class="text-center mb-6">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-blue-400">品牌定制服务</h3>
+                        <div class="text-center text-green-400 text-sm mb-4">
+                            <p>Logo修改(需提供)</p>
+                            <p>应用包名定制</p>
+                            <p>应用名称定制</p>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">¥599</div>
+                        <div class="text-gray-400 text-sm mb-2">仅需一次性投入，即可实现专属化品牌运作</div>
+                        <div class="text-gray-400">一次性服务</div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-800">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-certificate text-xl mb-2"></i>
+                            <p>品牌专属定制</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary w-full mt-6" style="display: none;">选择方案</button>
+                </div>
+            </div>
+            <div class="mt-16 text-center">
+                <h3 class="text-2xl font-bold mb-6 text-gradient">联系我们，获取专属方案</h3>
+                <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                    根据您的业务规模和需求，我们可以提供定制化的解决方案和灵活的定价策略。欢迎通过以下方式联系我们，获取专属服务。
+                </p>
+<!--                <div class="flex flex-col sm:flex-row justify-center gap-4">-->
+<!--                    <button class="btn-primary">联系商务</button>-->
+<!--                    <button class="btn-primary bg-gray-800 hover:bg-gray-700">申请演示</button>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo & Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-in">立即体验，开启云原生新纪元</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="contact-card fade-in">
+                    <div class="text-5xl mb-6">
+                        <i class="fas fa-rocket text-green-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">立即登录只读 Demo 后台</h3>
+                    <p class="text-gray-300 mb-6">
+                        无需注册，即刻体验完整功能。零风险评估，全方位了解平台能力。
+                    </p>
+                    <a href="https://admin.xfkgo.shop/vue" target="_blank" rel="noopener noreferrer" class="btn-primary w-full">进入演示后台</a>
+                </div>
+
+                <div class="mt-12 text-center">
+                    <h3 class="text-xl font-bold mb-4">商务合作</h3>
+                    <p class="text-gray-300 mb-6">
+                        加入我们，共同开拓全球网络资源新蓝海
+                    </p>
+                    <a href="https://t.me/SuiOps_Admin" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-green-400 hover:text-green-300 transition">
+                        <i class="fab fa-telegram-plane text-2xl mr-2"></i>
+                        Telegram 联系我们
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-gray-800">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <p>&copy; 2026 SUI-Ops (SuiOps). 保留所有权利。</p>
+            <p class="mt-2 text-sm">分布式网络资产自动化运维系统</p>
+        </div>
+    </footer>
+
+    <div id="videoModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black bg-opacity-90 p-4 transition-opacity duration-300" onclick="closeVideo()">
+
+        <div class="relative w-full max-w-5xl lg:max-w-6xl bg-black rounded-lg overflow-hidden shadow-2xl scale-90 transition-transform duration-300" onclick="event.stopPropagation()">
+            <button onclick="closeVideo()" class="absolute top-2 right-4 text-white hover:text-gray-300 text-4xl z-10 focus:outline-none">
+                &times;
+            </button>
+
+            <div class="aspect-video w-full">
+                <video id="localVideo" class="w-full h-full object-contain" controls playsinline preload="metadata">
+                    <source src="docs/assets/videos/demo.mp4" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频播放，请升级您的浏览器。
+                </video>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                // Vue data properties here
+            }
+        },
+        mounted() {
+            // Intersection Observer for fade-in animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all fade-in elements
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+    }).mount('#app');
+
+    // 获取 DOM 元素
+    const videoModal = document.getElementById('videoModal');
+    const localVideo = document.getElementById('localVideo');
+    const modalContent = videoModal.querySelector('.relative'); // 用于动画效果
+
+    // 打开视频弹窗函数
+    function openVideo() {
+        // 显示弹窗容器
+        videoModal.classList.remove('hidden');
+
+        // 强制重排以触发 CSS 动画 (如果后续增加了 fadeIn 动画)
+        // void videoModal.offsetWidth;
+
+        // 显示内容区域 (添加这行是为了做入场动画，当前代码已包含基础逻辑)
+        // videoModal.classList.add('opacity-100');
+        // modalContent.classList.add('scale-100');
+
+        // 播放视频
+        localVideo.play().catch(error => {
+            console.error("视频自动播放失败，可能是浏览器限制:", error);
+            // 可以在这里给用户一个提示，或者确保 controls 是显示的
+        });
+    }
+
+    // 关闭视频弹窗函数
+    function closeVideo() {
+        // 暂停视频
+        localVideo.pause();
+
+        // 可选：如果想每次关闭都从头开始播放，取消下面这行的注释
+        // localVideo.currentTime = 0;
+
+        // 隐藏弹窗容器
+        videoModal.classList.add('hidden');
+    }
+
+    // 可选：按 ESC 键也可以关闭弹窗
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+            closeVideo();
+        }
+    });
+</script>
+</body>
+</html>
