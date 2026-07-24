@@ -18,7 +18,7 @@
 ## 2. 认证接口规范
 
 * **接口基地址 (Base URL)**：`https://<你的总控地址>/api/auth`
-* **Token 有效期**：`5分钟`（过期后该 Token 自动进入不可用状态）
+* **Token 有效期**：`默认5分钟`（过期后该 Token 自动进入不可用状态）
 
 ### 2.1 登录获取令牌
 
@@ -36,11 +36,20 @@
 **成功响应示例**：
 ```JSON
 {
-    "code": 200,
-    "msg": "success",
-    "data": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey..."
-    }
+  "code": 200,
+  "message": "success",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...",
+    "user": {
+      "id": 1,
+      "username": "api_client_main",
+      "nickname": "API客户端",
+      "adminLevel": 2,
+      "enabled": true,
+      "permissions": ["view:vps", "delete:vps"]
+    },
+    "isAdmin": false
+  }
 }
 ```
 
@@ -50,23 +59,23 @@
 - 为了不中断您的后台自动化调用，必须在 5分钟 的生存窗口期内，利用老 Token 去调换新 Token。
 
 ### 3.1 刷新令牌 (Refresh Token)
-- 请求请求：POST /refresh-tokenHeaders 
+- 请求请求：POST /api/auth/refresh-token
 - 传参规范：必须在 HTTP 头中携带老令牌：Authorization: Bearer <当前尚未过期的老Token>
 - 请求响应示例：
 ```JSON
 {
-   "code": 200,
-   "msg": "success",
-   "data": {
-       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new_token_ey..."
-   }
+  "code": 200,
+  "message": "success",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new_token..."
+  }
 }
 ```
 ### 3.2 异常拦截返回码
 
 在调用刷新接口（`/refresh-token`）或后续其他业务接口时，如果遇到以下错误返回结构，外接系统（如发卡网、用户前端、自动化脚本）应立即触发**重新登录（Login）**机制，重新走登录接口获取新 Token：
 
-| 业务错误提示 (`msg`) | 触发原因 | 开发者外接处理策略 |
+| 业务错误提示 (`message`) | 触发原因 | 开发者外接处理策略 |
 | :--- | :--- | :--- |
 | **Token不能为空**<br>或 **Token无效** | 传入的 `Authorization` 头格式错误、未加 `Bearer ` 前缀，或者 Token 被中途篡改导致 JWT 验签失败。 | 检查外接系统本地的 Header 拼接与传输逻辑。 |
 | **Token不在刷新窗口内，无法刷新** | 该 Token 的生存期已完全消耗完毕（超过 5 分钟限制），彻底滑出允许刷新的临界窗口。 | 立即启动 `2.1` 登录流程，通过用户名和密码重新获取初始 Token。 |

@@ -33,7 +33,7 @@
 
 {
     "code": 200,
-    "msg": "success",
+    "message": "success",
     "data": [
         {
             "id": 1024,

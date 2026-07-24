@@ -65,7 +65,7 @@
 
 {
 "code": 200,
-"msg": "success",
+"message": "success",
 "data": {
 "id": 500123,
 "cdkCode": "SUI-AK9F8E7D6C5B",
@@ -107,7 +107,7 @@
 
 {
 "code": 200,
-"msg": "success",
+"message": "success",
 "data": [
 { "id": 500124, "cdkCode": "SUI-BATCH001A" },
 { "id": 500125, "cdkCode": "SUI-BATCH001B" }
@@ -135,7 +135,7 @@
 
 {
 "code": 200,
-"msg": "订阅激活成功！",
+"message": "订阅激活成功！",
 "data": {
 "subName": "旗舰版月付套餐",
 "subs": "https://xxx.com/...",
@@ -159,7 +159,7 @@
 
 {
 "code": 200,
-"msg": "success",
+"message": "success",
 "data": {
 "id": 500123,
 "cdkCode": "SUI-AK9F8E7D6C5B",
@@ -173,6 +173,6 @@
 
 {
 "code": 500,
-"msg": "CDK不存在",
+"message": "CDK不存在",
 "data": null
 }

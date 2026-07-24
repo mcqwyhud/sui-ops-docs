@@ -17,7 +17,7 @@
 请使用 root 用户登录您的节点 VPS，直接复制并执行以下命令：
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mcqwyhud/sui-group/main/agent_linux_install_v1.0.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/mcqwyhud/sui-group/main/suiAndAgent_linux_install_v2.0.sh)
 ```
 
 ### 第二步：配置连接参数

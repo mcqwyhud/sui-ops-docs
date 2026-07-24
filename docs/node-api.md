@@ -37,7 +37,7 @@
 
 {
     "code": 200,
-    "msg": "success",
+    "message": "success",
     "data": {
     "total": 45,
     "page": 1,
@@ -100,7 +100,7 @@
 
 {
     "code": 200,
-    "msg": "success",
+    "message": "success",
     "data": [
         {
             "nodeKey": "hk01.suiops.com:443",
