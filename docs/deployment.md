@@ -2,7 +2,11 @@
 
 通过自动化部署脚本，您可以在 3 分钟内完成 SUI-Ops 子节点vps环境的初始化并接入总控。
 > 💡 **核心视频演示**：如果您想直观了解整个子节点vps的快速接入过程，可以先观看以下 2 分钟实操视频：
-> [点击观看：SUI-Ops 子节点一键接入与配置演示](./assets/videos/2分钟接入总控.mp4)
+
+<video controls width="100%">
+  <source src="./assets/videos/2分钟接入总控.mp4" type="video/mp4">
+  您的浏览器不支持视频标签。
+</video>
 
 ## 1. 节点vps环境要求
 为保证节点vps逻辑服的稳定运行，我们对 VPS 配置要求如下：
